@@ -1,0 +1,30 @@
+[build-system]
+# Setuptools builds the package from this project directory.
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# This project supports Python 3.12 and lists its required packages below.
+name = "hayate"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.10.0,<2.11",
+    "transformers>=4.51.0,<6",
+    "safetensors",
+    "huggingface_hub",
+]
+
+[tool.setuptools.packages.find]
+# Install the hayate package and its subpackages.
+where = ["."]
+include = ["hayate*"]
+
+[[tool.uv.index]]
+# Resolve the CUDA 12.8 PyTorch wheel from its dedicated package index.
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
