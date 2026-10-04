@@ -13,6 +13,7 @@ from torch.nn.attention.flex_attention import (
     flex_attention,
 )
 
+from hayate.engine.constants import MIN_KV_PAGE_SIZE
 from hayate.model.cache import Cache
 
 
@@ -253,6 +254,14 @@ class PagedKVCacheManager:
 
         cache_lens = torch.tensor(lengths, dtype=torch.long, device=self.device)
         kv_lens = torch.tensor(kv_lengths, dtype=torch.long, device=self.device)
+
+        # The block mask reuses page_size as the FlexAttention block size, and
+        # Inductor rejects a block size its kernel tiles do not divide.
+        if self.page_size < MIN_KV_PAGE_SIZE:
+            raise ValueError(
+                f"page_size must be at least {MIN_KV_PAGE_SIZE} tokens because "
+                "FlexAttention derives its block size from the page size"
+            )
 
         def causal_mask(batch, _head, query_idx, key_idx):
             return (

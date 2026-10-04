@@ -70,8 +70,10 @@ engine = Engine("Qwen/Qwen3-4B", prefill_chunk_size=256)
 ```
 
 The engine stores request KV states in a shared paged pool. Its default capacity
-is 16,384 total token positions across active requests, with 16-token pages. Set
+is 16,384 total token positions across active requests, with 128-token pages. Set
 `max_cache_tokens` and `kv_page_size` when creating the engine to tune this pool.
+Page sizes below 128 tokens are rejected because FlexAttention reuses the page
+size as its block size and only compiles blocks its kernel tiles divide.
 The configured capacity includes prompt and cached generated-token positions;
 requests that exceed the available pool raise `MemoryError`.
 

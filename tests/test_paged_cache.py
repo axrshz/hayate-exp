@@ -62,13 +62,14 @@ class FlexPagedAttentionTests(unittest.TestCase):
             num_layers=1,
             num_kv_heads=2,
             head_dim=16,
-            max_cache_tokens=32,
-            page_size=4,
+            max_cache_tokens=1024,
+            page_size=128,
             max_requests=2,
             dtype=dtype,
             device="cuda",
         )
-        old_lengths = (3, 5)
+        # Histories longer than one page exercise the logical-to-physical mapping.
+        old_lengths = (130, 200)
         handles = []
         old_keys = []
         old_values = []

@@ -17,7 +17,11 @@ DEFAULT_PREFILL_CHUNK_SIZE = 512
 DEFAULT_KV_CACHE_TOKENS = 16_384
 
 # KV page size also sets the key block size used by FlexAttention.
-DEFAULT_KV_PAGE_SIZE = 16
+DEFAULT_KV_PAGE_SIZE = 128
+
+# FlexAttention only accepts block sizes that its kernel tiles divide, and the
+# tiles are at most 128 tokens in either dimension, so pages cannot be smaller.
+MIN_KV_PAGE_SIZE = 128
 
 # Prefix caching can store this many token positions by default.
 DEFAULT_PREFIX_CACHE_MAX_TOKENS = 4096
